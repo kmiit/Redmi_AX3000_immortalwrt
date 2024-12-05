@@ -241,6 +241,7 @@ index 6be7333..0a26728 100644
  	char amss_path[100];
  	struct mhi_controller *mhi_ctrl;
  	const struct ath11k_msi_config *msi_config;
+	enum mhi_callback mhi_pre_cb;
 -	u32 register_window;
 +	u32 window1_page;
  
