@@ -193,7 +193,7 @@ index f60c40c..6d12c80 100644
 +		.svc_to_ce_map_len = 17,
 +		.single_pdev_only = false,
 +		.rxdma1_enable = true,
-+		.num_rxmda_per_pdev = 1,
++		.num_rxdma_per_pdev = 1,
 +		.rx_mac_buf_ring = false,
 +		.vdev_start_delay = false,
 +		.htt_peer_map_v2 = true,
