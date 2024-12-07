@@ -1,8 +1,13 @@
 ImmortalWrt For Redmi AX3000
 ============================
 
-> Status:
-> Basically working
+Known issue:
+------------
+
+- Same as [openwrt-redmi-ax3000](https://github.com/hzyitc/openwrt-redmi-ax3000)
+- [NAT64 and NAT66 performance degradation](https://github.com/openwrt/openwrt/issues/15857)
+  > Workaround: 
+  > `ifconfig | grep "^[^ ]" | grep -v lo | awk '{print $1}' | while read iface; do ethtool -K $iface gro off; done`
 
 Default login address: http://192.168.1.1 or http://immortalwrt.lan, username: __root__, password: _none_.
 
