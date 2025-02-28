@@ -15,10 +15,12 @@
 	};
 
 	aliases {
+		ethernet0 = &gmac;
 		led-boot = &power_green;
 		led-failsafe = &info_red;
 		led-running = &power_green;
 		led-upgrade = &info_red;
+		label-mac-device = &gmac;
 	};
 
 	soc {
@@ -305,6 +307,7 @@
 };
 
 &pcie0 {
+	compatible = "qcom,pcie-ipq4019-lantiq-hack";
 	status = "okay";
 
 	perst-gpio = <&tlmm 38 GPIO_ACTIVE_LOW>;

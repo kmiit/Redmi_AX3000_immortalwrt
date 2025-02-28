@@ -34,10 +34,12 @@ mediatek_setup_interfaces()
 	asus,rt-ax59u|\
 	cetron,ct3003|\
 	cetron,ct3003-ubootmod|\
-	cmcc,a10|\
+	cmcc,a10-stock|\
+	cmcc,a10-ubootmod|\
 	confiabits,mt7981|\
 	cudy,wr3000-v1|\
 	jcg,q30-pro|\
+	keenetic,kn3811|\
 	livinet,zr-3020|\
 	livinet,zr-3020-ubootmod|\
 	qihoo,360t7|\
@@ -67,7 +69,8 @@ mediatek_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 sfp2" "eth1 wan"
 		;;
 	bananapi,bpi-r3-mini|\
-	edgecore,eap111)
+	edgecore,eap111|\
+	huasifei,wh3000-emmc)
 		ucidef_set_interfaces_lan_wan eth0 eth1
 		;;
 	bananapi,bpi-r4|\
@@ -78,6 +81,7 @@ mediatek_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "lan1" eth1
 		;;
 	cudy,ap3000outdoor-v1|\
+	cudy,ap3000-v1|\
 	cudy,re3000-v1|\
 	netgear,wax220|\
 	ubnt,unifi-6-plus|\
@@ -86,6 +90,7 @@ mediatek_setup_interfaces()
 		;;
 	cudy,m3000-v1|\
 	cudy,tr3000-v1|\
+	cudy,tr3000-v1-ubootmod|\
 	glinet,gl-mt2500|\
 	glinet,gl-mt3000|\
 	glinet,gl-x3000|\
@@ -94,8 +99,16 @@ mediatek_setup_interfaces()
 	openwrt,one)
 		ucidef_set_interfaces_lan_wan eth1 eth0
 		;;
-	dlink,aquila-pro-ai-m30-a1)
+	dlink,aquila-pro-ai-m30-a1|\
+	dlink,aquila-pro-ai-m60-a1)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" internet
+		;;
+	keenetic,kn-3911|\
+	smartrg,sdg-8622|\
+	smartrg,sdg-8632|\
+	smartrg,sdg-8733a|\
+	yuncore,ax835)
+		ucidef_set_interfaces_lan_wan lan wan
 		;;
 	mediatek,mt7986a-rfb)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 lan6" "eth1 wan"
@@ -109,12 +122,6 @@ mediatek_setup_interfaces()
 	mercusys,mr90x-v1|\
 	mercusys,mr90x-v1-ubi)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2" eth1
-		;;
-	smartrg,sdg-8622|\
-	smartrg,sdg-8632|\
-	smartrg,sdg-8733a|\
-	yuncore,ax835)
-		ucidef_set_interfaces_lan_wan lan wan
 		;;
 	tplink,tl-xdr6086|\
 	wavlink,wl-wn586x3)

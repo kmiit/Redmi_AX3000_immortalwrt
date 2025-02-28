@@ -32,26 +32,15 @@
 		};
 	};
 
-	gpio1: rtl8231-gpio {
-		compatible = "realtek,rtl8231-gpio";
-		#gpio-cells = <2>;
-		indirect-access-bus-id = <3>;
-		gpio-controller;
-	};
-
-	gpio-restart {
-		compatible = "gpio-restart";
-		gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
-	};
-
 	keys {
 		compatible = "gpio-keys-polled";
 		poll-interval = <20>;
 
-		mode {
+		reset {
 			label = "reset";
 			gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_RESTART>;
+			debounce-interval = <100>;
 		};
 	};
 
@@ -94,6 +83,24 @@
 	};
 };
 
+&mdio_aux {
+	status = "okay";
+
+	gpio1: expander@3 {
+		compatible = "realtek,rtl8231";
+		reg = <3>;
+
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-ranges = <&gpio1 0 0 37>;
+
+		led-controller {
+			compatible = "realtek,rtl8231-leds";
+			status = "disabled";
+		};
+	};
+};
+
 &spi0 {
 	status = "okay";
 	flash@0 {
@@ -131,13 +138,9 @@
 			};
 			partition@260000 {
 				label = "firmware";
-				reg = <0x260000 0x6d0000>;
+				reg = <0x260000 0xda0000>;
 				compatible = "openwrt,uimage", "denx,uimage";
 				openwrt,ih-magic = <0x83800000>;
-			};
-			partition@930000 {
-				label = "runtime2";
-				reg = <0x930000 0x6d0000>;
 			};
 		};
 	};

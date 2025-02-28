@@ -246,7 +246,7 @@ endef
 define U-Boot/mt7981_cmcc_a10
   NAME:=CMCC A10
   BUILD_SUBTARGET:=filogic
-  BUILD_DEVICES:=cmcc_a10
+  BUILD_DEVICES:=cmcc_a10-ubootmod
   UBOOT_CONFIG:=mt7981_cmcc_a10
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
@@ -277,6 +277,17 @@ define U-Boot/mt7981_cmcc_rax3000m-nand
   BL2_SOC:=mt7981
   BL2_DDRTYPE:=ddr4
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr4
+endef
+
+define U-Boot/mt7981_cudy_tr3000-v1
+  NAME:=Cudy TR3000 v1
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=cudy_tr3000-v1-ubootmod
+  UBOOT_CONFIG:=mt7981_cudy_tr3000-v1
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=cudy-tr3000-v1
+  BL2_SOC:=mt7981
+  DEPENDS:=+trusted-firmware-a-mt7981-cudy-tr3000-v1
 endef
 
 define U-Boot/mt7981_glinet_gl-x3000
@@ -921,6 +932,7 @@ UBOOT_TARGETS := \
 	mt7981_cmcc_a10 \
 	mt7981_cmcc_rax3000m-emmc \
 	mt7981_cmcc_rax3000m-nand \
+	mt7981_cudy_tr3000-v1 \
 	mt7981_gatonetworks_gdsp \
 	mt7981_glinet_gl-x3000 \
 	mt7981_glinet_gl-xe3000 \
