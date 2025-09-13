@@ -189,6 +189,13 @@ endif
 endef
 TARGET_DEVICES += xiaomi_ax6000
 
+define Device/xiaomi_cr8818
+	$(call Device/xiaomi_ipq50xx_base)
+	DEVICE_MODEL := CR8818
+	DEVICE_DTS_CONFIG := config@mp03.3
+endef
+TARGET_DEVICES += xiaomi_cr8818
+
 define Device/yuncore_ax830
 	$(call Device/FitImage)
 	$(call Device/UbiFit)
