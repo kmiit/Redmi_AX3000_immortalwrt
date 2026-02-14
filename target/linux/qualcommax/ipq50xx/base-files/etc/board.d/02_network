@@ -11,6 +11,7 @@ ipq50xx_setup_interfaces()
 	local board="$1"
 
 	case "$board" in
+	cmcc,rax3000q|\
 	redmi,ax3000)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "wan"
 		;;
