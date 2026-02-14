@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Free disk space
         run: |
@@ -46,6 +46,7 @@ jobs:
           cat <<EOF | sed -E 's/^  //' >.config
             CONFIG_TARGET_qualcommax=y
             CONFIG_TARGET_qualcommax_ipq50xx=y
+            CONFIG_TARGET_qualcommax_ipq50xx_DEVICE_redmi_ax3000=y
 
             CONFIG_IB=y
             # CONFIG_IB_STANDALONE is not set
@@ -89,7 +90,7 @@ jobs:
 
   release:
     needs: [ build ]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
