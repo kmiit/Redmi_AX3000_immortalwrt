@@ -1,0 +1,142 @@
+--- a/drivers/thermal/qcom/tsens-v1.c
++++ b/drivers/thermal/qcom/tsens-v1.c
+@@ -79,6 +79,17 @@ static struct tsens_features tsens_v1_fe
+ 	.trip_max_temp	= 120000,
+ };
+ 
++static struct tsens_features tsens_v1_no_rpm_feat = {
++	.ver_major	= VER_1_X_NO_RPM,
++	.crit_int	= 0,
++	.combo_int	= 0,
++	.adc		= 1,
++	.srot_split	= 1,
++	.max_sensors	= 11,
++	.trip_min_temp	= -40000,
++	.trip_max_temp	= 120000,
++};
++
+ static const struct reg_field tsens_v1_regfields[MAX_REGFIELDS] = {
+ 	/* ----- SROT ------ */
+ 	/* VERSION */
+@@ -150,6 +161,43 @@ static int __init init_8956(struct tsens
+ 	return init_common(priv);
+ }
+ 
++static int __init init_tsens_v1_no_rpm(struct tsens_priv *priv)
++{
++	int i, ret;
++	u32 mask = 0;
++
++	ret = init_common(priv);
++	if (ret < 0) {
++		dev_err(priv->dev, "Init common failed %d\n", ret);
++		return ret;
++	}
++
++	ret = regmap_field_write(priv->rf[TSENS_SW_RST], 1);
++	if (ret) {
++		dev_err(priv->dev, "Reset failed\n");
++		return ret;
++	}
++
++	for (i = 0; i < priv->num_sensors; i++)
++		mask |= BIT(priv->sensor[i].hw_id);
++
++	ret = regmap_field_update_bits(priv->rf[SENSOR_EN], mask, mask);
++	if (ret) {
++		dev_err(priv->dev, "Sensor Enable failed\n");
++		return ret;
++	}
++
++	ret = regmap_field_write(priv->rf[TSENS_EN], 1);
++	if (ret) {
++		dev_err(priv->dev, "Enable failed\n");
++		return ret;
++	}
++
++	ret = regmap_field_write(priv->rf[TSENS_SW_RST], 0);
++
++	return ret;
++}
++
+ static const struct tsens_ops ops_generic_v1 = {
+ 	.init		= init_common,
+ 	.calibrate	= calibrate_v1,
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -446,7 +446,7 @@ static void tsens_set_interrupt(struct t
+ 	dev_dbg(priv->dev, "[%u] %s: %s -> %s\n", hw_id, __func__,
+ 		irq_type ? ((irq_type == 1) ? "UP" : "CRITICAL") : "LOW",
+ 		enable ? "en" : "dis");
+-	if (tsens_version(priv) > VER_1_X)
++	if (tsens_version(priv) > VER_1_X_NO_RPM)
+ 		tsens_set_interrupt_v2(priv, hw_id, irq_type, enable);
+ 	else
+ 		tsens_set_interrupt_v1(priv, hw_id, irq_type, enable);
+@@ -498,7 +498,7 @@ static int tsens_read_irq_state(struct t
+ 	ret = regmap_field_read(priv->rf[LOW_INT_CLEAR_0 + hw_id], &d->low_irq_clear);
+ 	if (ret)
+ 		return ret;
+-	if (tsens_version(priv) > VER_1_X) {
++	if (tsens_version(priv) > VER_1_X_NO_RPM) {
+ 		ret = regmap_field_read(priv->rf[UP_INT_MASK_0 + hw_id], &d->up_irq_mask);
+ 		if (ret)
+ 			return ret;
+@@ -542,7 +542,7 @@ static int tsens_read_irq_state(struct t
+ 
+ static inline u32 masked_irq(u32 hw_id, u32 mask, enum tsens_ver ver)
+ {
+-	if (ver > VER_1_X)
++	if (ver > VER_1_X_NO_RPM)
+ 		return mask & (1 << hw_id);
+ 
+ 	/* v1, v0.1 don't have a irq mask register */
+@@ -732,7 +732,7 @@ static int tsens_set_trips(struct therma
+ static int tsens_enable_irq(struct tsens_priv *priv)
+ {
+ 	int ret;
+-	int val = tsens_version(priv) > VER_1_X ? 7 : 1;
++	int val = tsens_version(priv) > VER_1_X_NO_RPM ? 7 : 1;
+ 
+ 	ret = regmap_field_write(priv->rf[INT_EN], val);
+ 	if (ret < 0)
+@@ -975,9 +975,15 @@
+ 	if (ret)
+ 		goto err_put_device;
+ 	if (!enabled) {
+-		dev_err(dev, "%s: device not enabled\n", __func__);
+-		ret = -ENODEV;
+-		goto err_put_device;
++		switch (tsens_version(priv)) {
++			case VER_1_X_NO_RPM:
++			case VER_2_X_NO_RPM:
++				break;
++			default:
++				dev_err(dev, "%s: device not enabled\n", __func__);
++				ret = -ENODEV;
++				goto err_put_device;
++		}
+ 	}
+ 
+ 	priv->rf[SENSOR_EN] = devm_regmap_field_alloc(dev, priv->srot_map,
+@@ -1039,7 +1045,7 @@ int __init init_common(struct tsens_priv
+ 		}
+ 	}
+ 
+-	if (tsens_version(priv) > VER_1_X &&  ver_minor > 2) {
++	if (tsens_version(priv) > VER_1_X_NO_RPM &&  ver_minor > 2) {
+ 		/* Watchdog is present only on v2.3+ */
+ 		priv->feat->has_watchdog = 1;
+ 		for (i = WDOG_BARK_STATUS; i <= CC_MON_MASK; i++) {
+--- a/drivers/thermal/qcom/tsens.h
++++ b/drivers/thermal/qcom/tsens.h
+@@ -34,7 +34,9 @@
+ 	VER_0 = 0,
+ 	VER_0_1,
+ 	VER_1_X,
++	VER_1_X_NO_RPM,
+ 	VER_2_X,
++	VER_2_X_NO_RPM,
+ };
+ 
+ enum tsens_irq_type {

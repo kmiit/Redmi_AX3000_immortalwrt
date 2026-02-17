@@ -158,6 +158,10 @@
 	status = "okay";
 };
 
+&tsens {
+	status = "okay";
+};
+
 &soc {
 	leds {
 		compatible = "gpio-leds";
