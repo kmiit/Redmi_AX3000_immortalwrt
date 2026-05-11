@@ -39,6 +39,7 @@ case "$FIRMWARE" in
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;
+	redmi,ax3000|\
 	xiaomi,ax6000|\
 	xiaomi,cr8818)
 		caldata_extract "0:art" 0x1000 0x20000
@@ -82,6 +83,7 @@ case "$FIRMWARE" in
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;
+	redmi,ax3000|\
 	xiaomi,cr8818)
 		caldata_extract "0:art" 0x26800 0x20000
 		;;

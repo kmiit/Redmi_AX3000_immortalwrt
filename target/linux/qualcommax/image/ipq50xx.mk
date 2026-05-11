@@ -165,6 +165,13 @@ define Device/linksys_spnmx56
 endef
 TARGET_DEVICES += linksys_spnmx56
 
+define Device/redmi_ax3000
+	$(call Device/xiaomi_ipq50xx_base)
+	DEVICE_MODEL := AX3000
+	DEVICE_DTS_CONFIG := config@mp03.3
+endef
+TARGET_DEVICES += xiaomi_cr8818
+
 define Device/xiaomi_ax6000
 	$(call Device/FitImage)
 	$(call Device/UbiFit)

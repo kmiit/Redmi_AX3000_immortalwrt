@@ -171,6 +171,7 @@ platform_check_image() {
 
 platform_pre_upgrade() {
 	case "$(board_name)" in
+	redmi,ax3000|\
 	xiaomi,ax6000|\
 	xiaomi,cr8818)
 		xiaomi_initramfs_prepare
@@ -212,6 +213,7 @@ platform_do_upgrade() {
 		remove_oem_ubi_volume ubi_rootfs
 		nand_do_upgrade "$1"
 		;;
+	redmi,ax3000|\
 	xiaomi,ax6000|\
 	xiaomi,cr8818)
 		# Make sure that UART is enabled
