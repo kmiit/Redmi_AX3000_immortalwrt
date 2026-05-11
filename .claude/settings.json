@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /home/kmiit/111/Redmi_AX3000_immortalwrt log --oneline -50 --all -- target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq5000-ax3000.dts)",
+      "Bash(git -C /home/kmiit/111/Redmi_AX3000_immortalwrt log --oneline --all)"
+    ]
+  }
+}
