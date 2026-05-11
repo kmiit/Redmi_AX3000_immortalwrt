@@ -51,6 +51,7 @@ ALLWIFIBOARDS:= \
 	prpl_haze \
 	qnap_301w \
 	redmi_ax3000 \
+	cmcc_rax3000q \
 	redmi_ax6 \
 	skspruce_wia3300-20 \
 	spectrum_sax1v1k \
@@ -183,6 +184,7 @@ $(eval $(call generate-ipq-wifi-package,netgear_wax630,Netgear WAX630))
 $(eval $(call generate-ipq-wifi-package,qnap_301w,QNAP 301w))
 $(eval $(call generate-ipq-wifi-package,prpl_haze,prpl Haze))
 $(eval $(call generate-ipq-wifi-package,redmi_ax3000,Redmi AX3000))
+$(eval $(call generate-ipq-wifi-package,cmcc_rax3000q,CMCC RAX3000Q))
 $(eval $(call generate-ipq-wifi-package,redmi_ax6,Redmi AX6))
 $(eval $(call generate-ipq-wifi-package,skspruce_wia3300-20,SKSpruce WIA3300-20))
 $(eval $(call generate-ipq-wifi-package,spectrum_sax1v1k,Spectrum SAX1V1K))
