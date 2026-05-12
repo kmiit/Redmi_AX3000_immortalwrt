@@ -14,27 +14,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update -y
-          sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
-            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
-            g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
-            libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev \
-            libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano \
-            ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
-            python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
-            upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+          sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
 
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Hook the openwrt_core URL for opkg
-        run: |
-          OWNER="${GITHUB_REPOSITORY%%/*}"
-          REPO="${GITHUB_REPOSITORY#*/}"
-          TIME="$(curl "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" | jq -r .created_at)"
-
-          echo "ci-$(date -d "${TIME}" -u +'%Y%m%d-%H%M%S')-${GITHUB_SHA:0:8}" >version
-          sed -i "s|%U/targets/%S/packages|https://${OWNER}.github.io/${REPO}/${GITHUB_REF_NAME}/%R|" include/feeds.mk
+        uses: actions/checkout@v6
 
       - name: Update and install feeds
         run: |
@@ -66,24 +49,24 @@ jobs:
 
       - name: Build tools
         run: |
-          make -j$(nproc) tools/install
+          make -j$(nproc) tools/install V=sc
 
       - name: Build toolchain
         run: |
-          make -j$(nproc) toolchain/install
+          make -j$(nproc) toolchain/install V=sc
 
       - name: Build all
         run: |
-          make -j$(nproc) IGNORE_ERRORS=1
+          make -j$(nproc) V=sc
 
       - name: Upload bin to artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bin-qualcommax-ipq50xx
           path: bin/targets/qualcommax/ipq50xx/*
 
       - name: Upload dl to artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dl
           path: dl/*
@@ -95,16 +78,16 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Download dl from artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dl
           path: dl/
 
       - name: Download bin from artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: bin-qualcommax-ipq50xx
           path: bin/targets/qualcommax/ipq50xx/
@@ -135,7 +118,7 @@ jobs:
           tail --line=+2 Release.md >Body.md
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           prerelease: true
           tag_name: ${{ env.TAG }}
