@@ -1,0 +1,18 @@
+--- a/gcc/system.h
++++ b/gcc/system.h
+@@ -228,6 +228,15 @@
+ # include <utility>
+ # include <type_traits>
+ #endif
++#ifdef INCLUDE_MEMORY
++# include <memory>
++#endif
++#ifdef INCLUDE_MUTEX
++# include <mutex>
++#endif
++#ifdef INCLUDE_SSTREAM
++# include <sstream>
++#endif
+
+ /* There are an extraordinary number of issues with <ctype.h>.
+    The last straw is that it varies with the locale.  Use libiberty's
