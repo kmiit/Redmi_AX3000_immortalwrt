@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "architecture": "aarch64_cortex-a53",
+  "packages": {
+    "cgi-io": "2022.08.10~901b0f04-r21"
+  }
+}
