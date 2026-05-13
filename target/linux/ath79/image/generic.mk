@@ -1373,11 +1373,13 @@ define Device/elecom_wrc-1750ghbk2-i
   DEVICE_VENDOR := ELECOM
   DEVICE_MODEL := WRC-1750GHBK2-I/C
   IMAGE_SIZE := 15808k
+ifeq ($(IB),)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
   ARTIFACTS := initramfs-factory.bin
   ARTIFACT/initramfs-factory.bin := append-image initramfs-kernel.bin | \
 	pad-to 2 | edimax-header -b -s CSYS -m RN68 -f 0x70000 -S 0x01100000 | \
 	elecom-product-header WRC-1750GHBK2 | check-size
+endif
 endif
   DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct
 endef
@@ -1388,11 +1390,13 @@ define Device/elecom_wrc-300ghbk2-i
   DEVICE_VENDOR := ELECOM
   DEVICE_MODEL := WRC-300GHBK2-I
   IMAGE_SIZE := 7616k
+ifeq ($(IB),)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
   ARTIFACTS := initramfs-factory.bin
   ARTIFACT/initramfs-factory.bin := append-image initramfs-kernel.bin | \
 	pad-to 2 | edimax-header -b -s CSYS -m RN51 -f 0x70000 -S 0x01100000 | \
 	elecom-product-header WRC-300GHBK2-I | check-size
+endif
 endif
 endef
 TARGET_DEVICES += elecom_wrc-300ghbk2-i
@@ -3270,7 +3274,7 @@ define Device/xiaomi_aiot-ac2350
   SOC := qca9563
   DEVICE_VENDOR := Xiaomi
   DEVICE_MODEL := AIoT AC2350
-  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9984-ct
+  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9984-ct ipq-wifi-xiaomi_aiot-ac2350
   IMAGE_SIZE := 14336k
 endef
 TARGET_DEVICES += xiaomi_aiot-ac2350
@@ -3356,6 +3360,15 @@ define Device/zbtlink_zbt-wd323
 	kmod-usb-serial-cp210x uqmi
 endef
 TARGET_DEVICES += zbtlink_zbt-wd323
+
+define Device/zte_e8820
+  SOC := qca9563
+  DEVICE_VENDOR := ZTE
+  DEVICE_MODEL := E8820
+  IMAGE_SIZE := 16000k
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport kmod-ath10k-ct-smallbuffers ath10k-firmware-qca988x-ct
+endef
+TARGET_DEVICES += zte_e8820
 
 define Device/zyxel_nwa11xx
   $(Device/loader-okli-uimage)

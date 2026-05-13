@@ -43,9 +43,14 @@ jcg,q30-pro|\
 livinet,zr-3020-ubootmod|\
 mercusys,mr90x-v1-ubi|\
 netcore,n60|\
+netcore,n60-pro|\
+netis,nx31|\
 nokia,ea0326gmp|\
 qihoo,360t7|\
 routerich,ax3000-ubootmod|\
+tplink,tl-7dr7230-v1|\
+tplink,tl-7dr7230-v2|\
+tplink,tl-7dr7250-v1|\
 tplink,tl-xdr4288|\
 tplink,tl-xdr6086|\
 tplink,tl-xdr6088|\
@@ -75,6 +80,7 @@ bananapi,bpi-r3-mini|\
 bananapi,bpi-r4|\
 bananapi,bpi-r4-poe|\
 cmcc,rax3000m|\
+cmcc,rax3000me|\
 jdcloud,re-cp-03|\
 konka,komi-a31)
 	. /lib/upgrade/fit.sh
@@ -114,8 +120,10 @@ gatonetworks,gdsp)
 glinet,gl-mt3000)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x80000" "0x20000"
 	;;
+mercusys,mr80x-v3|\
 mercusys,mr90x-v1|\
 routerich,ax3000|\
+routerich,ax3000-v1|\
 tplink,re6000xd)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x20000" "0x20000" "1"
@@ -132,6 +140,9 @@ smartrg,sdg-8733a|\
 smartrg,sdg-8734)
 	local envdev=$(find_mmc_part "u-boot-env" "mmcblk0")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x8000" "0x8000"
+	;;
+tplink,archer-ax80-v1)
+	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x20000" "8"
 	;;
 ubnt,unifi-6-plus)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x80000" "0x10000"

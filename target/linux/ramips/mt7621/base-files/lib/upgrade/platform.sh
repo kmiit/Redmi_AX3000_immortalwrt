@@ -80,6 +80,7 @@ platform_do_upgrade() {
 	beeline,smartbox-turbo|\
 	beeline,smartbox-turbo-plus|\
 	belkin,rt1800|\
+	c-life,xg1|\
 	dlink,covr-x1860-a1|\
 	dlink,dap-x1860-a1|\
 	dlink,dir-1960-a1|\
@@ -157,8 +158,9 @@ platform_do_upgrade() {
 	buffalo,wsr-2533dhpls)
 		buffalo_do_upgrade "$1"
 		;;
-	dna,valokuitu-plus-ex400)
-		dna_do_upgrade "$1"
+	dna,valokuitu-plus-ex400|\
+	genexis,pulse-ex400)
+		inteno_do_upgrade "$1"
 		;;
 	elecom,wrc-x1800gs)
 		[ "$(fw_printenv -n bootmenu_delay)" != "0" ] || \

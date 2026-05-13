@@ -58,6 +58,9 @@ hiwifi,hc5661a|\
 hiwifi,hc5761a)
 	ucidef_set_led_switch "internet" "internet" "blue:internet" "switch0" "0x10"
 	;;
+huasifei,shf283)
+        ucidef_set_led_switch "wan" "WAN" "green:wan" "switch0" "0x01"
+        ;;
 keenetic,kn-1613)
 	ucidef_set_led_switch "internet" "internet" "green:internet" "switch0" "0x01"
 	;;
@@ -92,6 +95,7 @@ tplink,archer-mr200-v5)
 	ucidef_set_led_netdev "lan" "lan" "white:lan" "eth0"
 	ucidef_set_led_netdev "wan" "wan" "white:wan" "wwan0"
 	;;
+cudy,re1200-outdoor-v1|\
 tplink,re200-v2|\
 tplink,re200-v3|\
 tplink,re200-v4|\

@@ -10,6 +10,13 @@ PHYNBR=${DEVPATH##*/phy}
 board=$(board_name)
 
 case "$board" in
+	arcadyan,we410443)
+		label_mac=$(mtd_get_mac_ascii config mac)
+		[ "$PHYNBR" = "0" ] && \
+			macaddr_add $label_mac 1 > /sys${DEVPATH}/macaddress
+		[ "$PHYNBR" = "1" ] && \
+			macaddr_add $label_mac 2 > /sys${DEVPATH}/macaddress
+		;;
 	arcadyan,we420223-99)
 		if [ "$PHYNBR" = "0" ]; then
 			mac24=$(macaddr_add "$(get_mac_label)" "0xf00001")
@@ -33,6 +40,9 @@ case "$board" in
 			macaddr_add $lan_mac_addr 1 > /sys${DEVPATH}/macaddress
 		[ "$PHYNBR" = "1" ] && \
 			macaddr_add $lan_mac_addr 8 > /sys${DEVPATH}/macaddress
+		;;
+	c-life,xg1)
+		[ "$PHYNBR" = "1" ] && macaddr_setbit_la "$(macaddr_add $(get_mac_label) 1)" > /sys${DEVPATH}/macaddress
 		;;
 	comfast,cf-e390ax)
 		[ "$PHYNBR" = "0" ] && echo -n "$(mtd_get_mac_binary factory 0x0004)" > /sys${DEVPATH}/macaddress
@@ -103,7 +113,7 @@ case "$board" in
 			macaddr_setbit_la "$(mtd_get_mac_binary factory 0x4)" > /sys${DEVPATH}/macaddress
 		;;
 	hiwifi,hc5962)
-		label_mac=$(mtd_get_mac_ascii bdinfo "Vfac_mac ")
+		label_mac=$(mtd_get_mac_ascii bdinfo "Vfac_mac")
 		[ "$PHYNBR" = "0" ] && [ -n "$label_mac" ] && \
 		echo -n "$label_mac" > /sys${DEVPATH}/macaddress
 		[ "$PHYNBR" = "1" ] && [ -n "$label_mac" ] && \
@@ -127,7 +137,7 @@ case "$board" in
 			macaddr_setbit_la "$(mtd_get_mac_binary Factory 0x4)" > /sys${DEVPATH}/macaddress
 		;;
 	jdcloud,re-sp-01b)
-		addr=$(macaddr_canonicalize "$(strings "$(find_mtd_part config)" | sed -n 's/^'"mac"'=//p' | head -n1)")
+		addr=$(mtd_get_mac_ascii config mac)
 		[ "$PHYNBR" = "0" ] && echo $addr > /sys${DEVPATH}/macaddress
 		[ "$PHYNBR" = "1" ] && macaddr_add $addr 0x800000 > /sys${DEVPATH}/macaddress
 		;;
