@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      ci_version: ${{ steps.hook_core.outputs.ci_version }}
     steps:
       - name: Free disk space
         run: |
@@ -18,6 +20,29 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Hook the openwrt_core URL for opkg
+        id: hook_core
+        run: |
+          set -euo pipefail
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          RUN_META="$(curl -fsSL "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")" || {
+            echo "Failed to fetch workflow run metadata from GitHub API (repo=${GITHUB_REPOSITORY}, run=${GITHUB_RUN_ID})."
+            exit 1
+          }
+          TIME="$(jq -er .created_at <<<"${RUN_META}")" || {
+            echo "Invalid workflow run metadata: missing created_at."
+            exit 1
+          }
+          CI_VERSION="ci-$(date -d "${TIME}" -u +'%Y%m%d-%H%M%S')-${GITHUB_SHA:0:8}"
+
+          echo "ci_version=${CI_VERSION}" >>"$GITHUB_OUTPUT"
+          grep -Fq '%U/targets/%S/packages' include/feeds.mk || {
+            echo "Expected pattern '%U/targets/%S/packages' not found in include/feeds.mk."
+            exit 1
+          }
+          sed -i "s|%U/targets/%S/packages|https://${OWNER}.github.io/${REPO}/${GITHUB_REF_NAME}/%R|" include/feeds.mk
 
       - name: Update and install feeds
         run: |
@@ -70,6 +95,61 @@ jobs:
         with:
           name: dl
           path: dl/*
+
+      - name: Upload core packages to artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: core-packages
+          path: bin/packages/*
+
+  gh-pages:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v6
+        with:
+          path: 'gh-pages'
+          ref: 'gh-pages'
+          fetch-depth: 0
+
+      - name: Configure the git user
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Download core packages from artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: core-packages
+          path: bin/packages/
+
+      - name: Copy core packages
+        run: |
+          version="${{ needs.build.outputs.ci_version }}"
+          mkdir -p "gh-pages/${GITHUB_REF_NAME}/${version}/"
+          cp -avr bin/packages/* "gh-pages/${GITHUB_REF_NAME}/${version}/"
+
+      - name: Commit
+        id: commit_core
+        run: |
+          cd gh-pages
+          git add .
+          if git diff --cached --quiet; then
+            echo "No core package updates to commit."
+            echo "has_changes=false" >>"$GITHUB_OUTPUT"
+          else
+            git commit -m "Add core packages: ${GITHUB_REF_NAME}: ${GITHUB_SHA:0:8}"
+            echo "has_changes=true" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish
+        if: steps.commit_core.outputs.has_changes == 'true'
+        run: |
+          cd gh-pages
+          git push origin gh-pages
 
   release:
     needs: [ build ]
