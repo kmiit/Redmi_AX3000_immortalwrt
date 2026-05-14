@@ -1,4 +1,5 @@
 . /lib/functions/bootconfig.sh
+. /lib/upgrade/mi_dualboot.sh
 
 PART_NAME=firmware
 REQUIRE_IMAGE_METADATA=1
@@ -210,6 +211,9 @@ platform_do_upgrade() {
 		linksys_bootconfig_pre_upgrade "$1"
 		remove_oem_ubi_volume ubi_rootfs
 		nand_do_upgrade "$1"
+		;;
+	redmi,ax3000)
+		mi_dualboot_do_upgrade "$1"
 		;;
 	xiaomi,ax6000)
 		# Make sure that UART is enabled
