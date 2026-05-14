@@ -130,27 +130,19 @@ jobs:
           name: bin-qualcommax-ipq50xx
           path: bin/
 
-      - name: Copy core packages
+      - name: Copy contents
         run: |
-          version="${{ needs.build.outputs.ci_version }}"
+          version="$(cat "bin/version.buildinfo")"
           mkdir -p "gh-pages/${GITHUB_REF_NAME}/${version}/"
           cp -avr bin/packages/* "gh-pages/${GITHUB_REF_NAME}/${version}/"
 
       - name: Commit
-        id: commit_core
         run: |
           cd gh-pages
           git add .
-          if git diff --cached --quiet; then
-            echo "No core package updates to commit."
-            echo "has_changes=false" >>"$GITHUB_OUTPUT"
-          else
-            git commit -m "Add core packages: ${GITHUB_REF_NAME}: ${GITHUB_SHA:0:8}"
-            echo "has_changes=true" >>"$GITHUB_OUTPUT"
-          fi
+          git commit -m "Add: ${GITHUB_REF_NAME}: $(cat ../bin/version.buildinfo)"
 
       - name: Publish
-        if: steps.commit_core.outputs.has_changes == 'true'
         run: |
           cd gh-pages
           git push origin gh-pages -f
