@@ -162,22 +162,6 @@
 	status = "okay";
 };
 
-&{/thermal-zones/gephy-thermal} {
-	/*
-	 * This inherited IPQ5018 zone reports a bogus critical reading on
-	 * IPQ5000-based Redmi AX3000 early in boot and forces shutdown.
-	 */
-	status = "disabled";
-};
-
-&{/thermal-zones/top-glue-thermal} {
-	/*
-	 * This inherited IPQ5018 zone reports a bogus critical reading on
-	 * IPQ5000-based Redmi AX3000 early in boot and forces shutdown.
-	 */
-	status = "disabled";
-};
-
 &soc {
 	leds {
 		compatible = "gpio-leds";
